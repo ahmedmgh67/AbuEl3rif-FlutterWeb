@@ -8,3 +8,8 @@ main() async {
   await ui.webOnlyInitializePlatform();
   app.main();
 }
+// flutter:
+//     dependency: transitive
+//     description: flutter
+//     source: sdk
+//     version: "0.0.0"
