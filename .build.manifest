@@ -1,8 +1,4 @@
 .packages
-assets/FontManifest.json
-assets/GoogleSansRegular.ttf
-assets/official me.jpg
-assets/pk.jpg
 index.html
 main.dart.js
 packages/$sdk/_internal/ddc_sdk.sum
