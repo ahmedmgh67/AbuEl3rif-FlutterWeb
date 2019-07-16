@@ -1,5 +1,5 @@
 import 'package:flutter_web/material.dart';
-import './src/pages/homePage.dart';
+import './src/pages/payPage.dart';
 
 void main() => runApp(App());
 
@@ -12,7 +12,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: "GoogleSansRegular",
       ),
-      home: HomePage(title: 'Flutter Demo Home Page'),
+      home: PayPage(),
     );
   }
 }
