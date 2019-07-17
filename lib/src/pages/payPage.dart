@@ -1,5 +1,6 @@
 import 'package:flutter_web/material.dart';
 import '../utils/responsiveWidget.dart';
+import 'dart:html' as html;
 
 class PayPage extends StatefulWidget {
   @override
@@ -13,6 +14,11 @@ class _PayPageState extends State<PayPage> {
       largeScreen: bigScreen(),
       smallScreen: smallScreen(),
     );
+  }
+  @override
+  initState(){
+    super.initState();
+    //html.window.alert(Uri.base.queryParameters["foo"]);
   }
 
   Widget bigScreen() {

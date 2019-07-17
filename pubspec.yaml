@@ -9,6 +9,7 @@ dependencies:
   flutter_web: any
   flutter_web_ui: any
   http: any 
+  sembast: ^1.17.2
 
 dev_dependencies:
   build_runner: ^1.6.0

@@ -362,6 +362,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.3+2"
+  sembast:
+    dependency: "direct main"
+    description:
+      name: sembast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.17.2"
   shelf:
     dependency: transitive
     description:
@@ -418,6 +425,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0+1"
   term_glyph:
     dependency: transitive
     description:

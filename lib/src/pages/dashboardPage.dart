@@ -3,8 +3,13 @@ import '../utils/responsiveWidget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/apartment.dart';
+import 'dart:html' as html;
+import './changeTenant.dart';
+import './addApartmentPage.dart';
+import '../models/currentData.dart';
 
 class DashboardPage extends StatefulWidget {
+  CurrentData cd = new CurrentData();
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
@@ -47,12 +52,20 @@ class _DashboardPageState extends State<DashboardPage> {
   //     "rent": "5000"
   //   },
   // ];
-  List<Apartment> apartments;
+
+  @override
+  initState() {
+    super.initState();
+    request();
+    //html.window.history.pushState("", "Dashboard", "/dashboard");
+  }
+
+  List<Apartment> apartments = [];
   bool loaded = false;
 
-  var balance;
+  var balance = "80000";
   Widget bigScreen() {
-    return !loaded ?Center(child: CircularProgressIndicator(),): Scaffold(
+    return Scaffold(
       body: ListView(
         children: <Widget>[
           Row(
@@ -175,15 +188,17 @@ class _DashboardPageState extends State<DashboardPage> {
                 RaisedButton(
                   color: Colors.blue,
                   child: Text("Add Apartment"),
-                  onPressed: () {},
+                  onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => AddApartmentPage())),
                 ),
                 Container(
                   margin: EdgeInsets.only(left: 20.0),
                   child: RaisedButton(
-                    color: Colors.blue,
-                    child: Text("Add/Relese Tenant"),
-                    onPressed: () {},
-                  ),
+                      color: Colors.blue,
+                      child: Text("Add/Relese Tenant"),
+                      onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => ChangeTenantPage()))),
                 ),
               ],
             ),
@@ -210,7 +225,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget smallScreen() {
-    return !loaded ?Center(child: CircularProgressIndicator(),):Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text("Dashboard"),
       ),
@@ -218,60 +233,71 @@ class _DashboardPageState extends State<DashboardPage> {
         child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(
-              //child: Container,
               currentAccountPicture: FlutterLogo(),
               accountEmail: Text("ahmedmgh67@gmail.com"),
               accountName: Text("Ahmed M. Gamal"),
             ),
             ListTile(
               title: Text("Release / Add Tenant"),
-              onTap: () {},
+              onTap: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => ChangeTenantPage())),
             ),
             ListTile(
               title: Text("Add Apartment"),
-              onTap: () {},
+              onTap: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => AddApartmentPage())),
             ),
           ],
         ),
       ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(color: Colors.blue),
-            padding: EdgeInsets.only(right: 5.0, left: 5.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: apartments == []
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(right: 5.0, top: 5.0), // left: 5.0),
-                  child: Text("Balance"),
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 5.0, top: 1.0), // left: 5.0),
-                  child: Text("80000 EGP", style: TextStyle(fontSize: 40.0)),
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 5.0, top: 5.0), // left: 5.0),
-                  child: Text("Next Month Charge"),
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 5.0, top: 1.0), // left: 5.0),
-                  child: Text("20000 EGP", style: TextStyle(fontSize: 40.0)),
-                ),
-              ],
-            ),
-          ),
-        ]..addAll(
-            apartments.map(
-              (i) => ListTile(
-                    isThreeLine: true,
-                    title: Text(i.address),
-                    trailing: Text("${i.dueday}"),
-                    subtitle: Text(i.name + "\n" + i.rate.toString()),
+                  decoration: BoxDecoration(color: Colors.blue),
+                  padding: EdgeInsets.only(right: 5.0, left: 5.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                            right: 5.0, top: 5.0), // left: 5.0),
+                        child: Text("Balance"),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            right: 5.0, top: 1.0), // left: 5.0),
+                        child:
+                            Text("80000 EGP", style: TextStyle(fontSize: 40.0)),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            right: 5.0, top: 5.0), // left: 5.0),
+                        child: Text("Next Month Charge"),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                            right: 5.0, top: 1.0), // left: 5.0),
+                        child:
+                            Text("20000 EGP", style: TextStyle(fontSize: 40.0)),
+                      ),
+                    ],
                   ),
+                ),
+              ]..addAll(
+                  apartments.map(
+                    (i) => ListTile(
+                          isThreeLine: true,
+                          title: Text(i.address),
+                          trailing: Text("${i.dueday}"),
+                          subtitle: Text(i.name + "\n" + i.rate.toString()),
+                        ),
+                  ),
+                ),
             ),
-          ),
-      ),
     );
   }
 
@@ -284,25 +310,44 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void request() async {
-    var req = await http.get("https://abuel3rif-api.herokuapp.com/api/apartments/ahmedmgh67@gmail.com");
+    var req = await http.get(
+      "https://abuel3rif-api.herokuapp.com/api/apartments/ahmedmgh67@gmail.com",
+    );
+    //headers: {"Access-Control-Allow-Origin": null});
     var decoded = jsonDecode(req.body);
-    for (var i = 0; i < decoded.length; i++) {
-      apartments.add(
-        Apartment(
-          decoded[i]["address"],
-          decoded[i]["dueday"],
-          decoded[i]["email"],
-          decoded[i]["name"],
-          decoded[i]["phone"],
-          decoded[i]["rate"],
-        ),
-      );
-    }
-    // var req2 = await http.get("url");
-    // var decoded2 = jsonDecode(req2.body);
-    // balance = decoded2["balance"];
-    setState(() {
-      loaded = true;
-    });
+    List<Apartment> apts;
+
+    setState(
+      () {
+        for (var i = 0; i < decoded.length; i++) {
+          apartments.add(
+            Apartment(
+              decoded[i]["address"],
+              decoded[i]["dueday"],
+              "", //decoded[i]["email"],
+              decoded[i]["name"],
+              decoded[i]["phone"],
+              decoded[i]["rate"],
+              decoded[i]["_id"],
+            ),
+          );
+          DashboardPage().cd.addApartment(
+                Apartment(
+                  decoded[i]["address"],
+                  decoded[i]["dueday"],
+                  "", //decoded[i]["email"],
+                  decoded[i]["name"],
+                  decoded[i]["phone"],
+                  decoded[i]["rate"],
+                  decoded[i]["_id"],
+                ),
+              );
+        }
+      },
+    );
+    // setState(() {
+    //   //loaded = true;
+    // apartments = apts;
+    // });
   }
 }
